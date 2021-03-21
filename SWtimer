@@ -1,0 +1,45 @@
+''' <summary>
+''' Class SWtimer
+''' </summary>
+Public Class SWtimer
+    ' EXAMPLE:
+    ' Dim SW as New SWtimer
+    ' Sub1()
+    ' Console.WriteLine(SW.TimerGet & vbTab & "Sub1()")
+    ' Sub2()
+    ' Console.WriteLine(SW.TimerGet & vbTab & "Sub2()")
+    ' ...
+    ' Console.WriteLine(SW.TimerGet & vbTab & "Total Time")
+    ' SW.TimerStop()
+
+    Private _SW As Stopwatch
+    Private _ET As Double = 0
+
+    Public Sub New()
+        TimerStart()
+    End Sub
+    Public Sub TimerStart()
+        _SW = New Stopwatch
+        _ET = 0
+        _SW.Start()
+    End Sub
+
+    Public Sub TimerStop()
+        _SW.Stop()
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+        _SW = Nothing
+    End Sub
+
+    Public Function TimerGet(ByVal Optional numberofDigits As Integer = 1) As String
+        Dim time As Double = _SW.ElapsedTicks / CDbl(Stopwatch.Frequency) - _ET
+        If time > 1 Then Return Math.Round(time, numberofDigits) & " s"
+        If time > 0.001 Then Return Math.Round(1000.0 * time, numberofDigits) & " ms"
+        If time > 0.000001 Then Return Math.Round(1000000.0 * time, numberofDigits) & " µs"
+        If time > 0.000000001 Then Return Math.Round(1000000000.0 * time, numberofDigits) & " ns"
+        _ET = _SW.ElapsedTicks / CDbl(Stopwatch.Frequency)
+        Return _SW.ElapsedTicks & " ticks"
+    End Function
+End Class
